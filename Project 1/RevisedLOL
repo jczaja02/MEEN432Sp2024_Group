@@ -1,0 +1,62 @@
+% Project 1 Initial Conditions
+tic;
+
+% Initial Conditions
+w_0 = 1.0;
+J = 1;
+A = 1;
+b = 1;
+
+dT = [0.001, 0.1, 1];
+solver = ["ode1", "ode4"];
+
+for i = 1:2
+    for j = 1:3
+        simout = sim("P1_pt1.slx", "Solver", solver(i), "FixedStep", string(dT(j)));
+        
+        W = simout.w.Data;
+        W_DOT = simout.w_dot.Data;
+        T = simout.tout;
+        
+        plot(T, W)
+        hold on        
+    end
+    hold off
+    title('W vs T for different solvers and dTs')
+    xlabel('Time (T)')
+    ylabel('W')
+    figure;
+end
+
+for i = 1:2
+    for j = 1:3
+        simout = sim("P1_pt1.slx", "Solver", solver(i), "FixedStep", string(dT(j)));
+        
+        W_DOT = simout.w_dot.Data;
+        T = simout.tout;
+        
+        plot(T, W_DOT)
+        hold on
+    end
+    hold off
+    title('W_DOT vs T for different solvers and dTs')
+    xlabel('Time (T)')
+    ylabel('W_DOT')
+    figure;    
+end
+
+% 🟩 Step 1: Run the simulation and capture simulated rotational speed data
+simOut = sim('P1_pt1.slx', 'SaveOutput', 'on', 'OutputSaveName', 'W');
+data = simOut.get('W');
+sim_rotational_speed = data.get('W'); % Ensure this name matches your Simulink model
+
+% 🟦 Step 2: Define your theoretical rotational speed model
+calculate_theoretical_speed = @(t) (A/b)*(1-exp(-b*t/J))+w_0*exp(-b*t/J);
+theoretical_speeds = arrayfun(calculate_theoretical_speed, simOut.tout);
+
+% 🟥 Step 3: Calculate the error and find the maximum error
+errors = abs(sim_rotational_speed - theoretical_speeds); % Absolute difference between simulated and theoretical speeds
+max_error = max(errors); % Find the maximum error
+fprintf('Maximum error: %f\n', max_error); % Display the maximum error
+
+toc
