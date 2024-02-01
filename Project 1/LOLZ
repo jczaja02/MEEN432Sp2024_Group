@@ -1,0 +1,48 @@
+% Assuming W_theoretical is a function that computes the theoretical W given T
+W_theoretical = @(T) ... % define the theoretical model here
+
+max_errors = zeros(2, 3); % to store maximum errors for each solver and dT combination
+
+for i = 1:2
+    for j = 1:3
+        simout = sim("P1_pt1.slx", "Solver", solver(i), "FixedStep", string(dT(j)));
+        
+        W = simout.w.Data;
+        T = simout.tout;
+        
+        % Calculate the theoretical W for the given T
+        W_theo = arrayfun(W_theoretical, T);
+        
+        % Calculate the error
+        error = abs(W - W_theo);
+        
+        % Find and store the maximum error
+        max_errors(i, j) = max(error);
+        
+        % Plotting the simulated W and the error
+        subplot(2,1,1);
+        plot(T, W)
+        hold on
+        plot(T, W_theo, '--')
+        hold off
+        title(['W vs T for solver ' char(solver(i)) ' and dT ' num2str(dT(j))])
+        xlabel('Time (T)')
+        ylabel('W')
+        legend('Simulated W', 'Theoretical W')
+        
+        subplot(2,1,2);
+        plot(T, error)
+        title('Error over time')
+        xlabel('Time (T)')
+        ylabel('Error')
+        
+        % Pause between plots for clarity
+        pause(1)
+        
+        figure;
+    end
+end
+
+% Display the maximum errors
+disp('Maximum errors for each solver and dT combination:')
+disp(max_errors)
