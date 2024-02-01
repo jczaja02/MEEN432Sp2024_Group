@@ -46,3 +46,13 @@ end
 % Display the maximum errors
 disp('Maximum errors for each solver and dT combination:')
 disp(max_errors)
+
+Error using P1P1_2
+Error due to multiple causes.
+Caused by:
+    Error using P1P1_2
+    Simulink cannot determine sizes and/or types of the outputs for block 'P1_pt1_2/MATLAB Function' due to errors in the block body, or limitations of the
+    underlying analysis. The errors might be inaccurate. Fix the indicated errors, or explicitly specify sizes and/or types for all block outputs.
+    Error using P1P1_2
+    Error in port widths or dimensions. 'Output Port 1' of 'P1_pt1_2/MATLAB Function/w' has 2 elements.  This port does not accept the dimensions (or orientation)
+    specified by the output signal.
