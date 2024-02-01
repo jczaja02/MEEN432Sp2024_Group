@@ -56,3 +56,42 @@ Caused by:
     Error using P1P1_2
     Error in port widths or dimensions. 'Output Port 1' of 'P1_pt1_2/MATLAB Function/w' has 2 elements.  This port does not accept the dimensions (or orientation)
     specified by the output signal.
+
+
+
+
+
+
+% Initial Conditions
+w_0 = [10, 0];
+J = [100, 0.01];
+A = [0, 100];
+b = [10, 0.1];
+freq = [0.1, 100];
+
+% Nested loops for each variable
+for w0_index = 1:length(w_0)
+    for J_index = 1:length(J)
+        for A_index = 1:length(A)
+            for b_index = 1:length(b)
+                for freq_index = 1:length(freq)
+                    % Set the parameters in the Simulink model
+                    set_param('P1_pt1_2/...', 'w_0', num2str(w_0(w0_index))); % Update with actual block parameter names
+                    set_param('P1_pt1_2/...', 'J', num2str(J(J_index)));
+                    set_param('P1_pt1_2/...', 'A', num2str(A(A_index)));
+                    set_param('P1_pt1_2/...', 'b', num2str(b(b_index)));
+                    set_param('P1_pt1_2/...', 'freq', num2str(freq(freq_index)));
+                    
+                    % Run the simulation with the current set of parameters
+                    simout = sim('P1_pt1_2.slx');
+                    
+                    % Extract the data from the simulation
+                    W = simout.get('w').Data;
+                    W_DOT = simout.get('w_dot').Data;
+
+                    % ... (any additional code for processing the results)
+                end
+            end
+        end
+    end
+end
