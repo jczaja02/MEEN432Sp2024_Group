@@ -312,3 +312,79 @@ for w0_index = 1:2
     end
 end
 toc
+
+
+
+
+
+
+
+
+
+% Project 1 Initial Conditions
+tic;
+
+% Initial Conditions
+w_0_values = [10, 0];
+J_values = [100, 0.01];
+A_values = [0, 100];
+b_values = [10, 0.1];
+freq_values = [0.1, 100];  % Assuming you might use it later
+
+dT = [0.001, 0.1, 1];
+solver = ["ode1", "ode4"];
+
+% Loop through each combination of variables
+for w0_index = 1:2
+    for J_index = 1:2
+        for A_index = 1:2
+            for b_index = 1:2
+                for solver_index = 1:2
+                    for dT_index = 1:3
+                        % Set the parameters for the simulation
+                        w_0_param = w_0_values(w0_index);
+                        J_param = J_values(J_index);
+                        A_param = A_values(A_index);
+                        b_param = b_values(b_index);
+                        currentSolver = solver(solver_index);
+                        currentdT = dT(dT_index);
+
+                        % Run the simulation
+                        simOut = sim('P1_pt1_2', ...
+                                     'Solver', char(currentSolver), ...
+                                     'FixedStep', num2str(currentdT)); % Adjust StopTime as needed
+                        
+                        % Extract data from the simulation output
+                        % Assuming the To Workspace blocks are named 'outw' and 'outw_dot'
+                        W = simOut.yout{1}.Values.Data;  % Adjust the index based on the signal order
+                        W_DOT = simOut.yout{2}.Values.Data;  % Adjust the index based on the signal order
+                        T = simOut.tout;
+
+                        % Create a new figure for each combination
+                        figure;
+                        
+                        % Plot W
+                        subplot(2, 1, 1);
+                        plot(T, W);
+                        title(sprintf('W with Solver: %s, dT: %g, w_0: %g, J: %g, A: %g, b: %g', ...
+                            currentSolver, currentdT, w_0_param, J_param, A_param, b_param));
+                        xlabel('Time (s)');
+                        ylabel('W (rad/s)');
+                        
+                        % Plot W_DOT
+                        subplot(2, 1, 2);
+                        plot(T, W_DOT);
+                        title(sprintf('W_DOT with Solver: %s, dT: %g, w_0: %g, J: %g, A: %g, b: %g', ...
+                            currentSolver, currentdT, w_0_param, J_param, A_param, b_param));
+                        xlabel('Time (s)');
+                        ylabel('W_DOT (rad/s^2)');
+
+                        % Uncomment the next line to save figures as files
+                        % saveas(gcf, sprintf('SimOutput_%d_%d_%d_%d_%d_%d.fig', w0_index, J_index, A_index, b_index, dT_index, solver_index));
+                    end
+                end
+            end
+        end
+    end
+end
+toc
