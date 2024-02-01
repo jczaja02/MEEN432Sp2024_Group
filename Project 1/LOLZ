@@ -95,3 +95,68 @@ for w0_index = 1:length(w_0)
         end
     end
 end
+
+
+
+
+
+
+% Initial Conditions
+w_0_values = [10, 0];
+J_values = [100, 0.01];
+A_values = [0, 100];
+b_values = [10, 0.1];
+dT = [0.001, 0.1, 1];
+solver = ["ode1", "ode4"];
+
+% Figure index
+figIndex = 1;
+
+% Nested loops for each combination of w_0, J, A, b, dT, and solver
+for w0_index = 1:2
+    for J_index = 1:2
+        for A_index = 1:2
+            for b_index = 1:2
+                for dT_index = 1:length(dT)
+                    for solver_index = 1:length(solver)
+                        % Set the parameters for the simulation
+                        w_0 = w_0_values(w0_index);
+                        J = J_values(J_index);
+                        A = A_values(A_index);
+                        b = b_values(b_index);
+                        currentSolver = solver(solver_index);
+                        currentdT = dT(dT_index);
+
+                        % Run the simulation
+                        simout = sim('P1_pt1_2.slx', 'Solver', currentSolver, 'FixedStep', string(currentdT));
+                        
+                        % Extract data from simulation output
+                        W = simout.get('W').signals.values;
+                        W_DOT = simout.get('W_DOT').signals.values;
+                        T = simout.get('tout');
+
+                        % Plot the results for W
+                        figure(figIndex);
+                        subplot(2,1,1); % upper plot
+                        plot(T, W);
+                        title(['W for Solver: ', currentSolver, ', dT: ', num2str(currentdT)]);
+                        xlabel('Time');
+                        ylabel('W');
+                        grid on;
+                        
+                        % Plot the results for W_DOT
+                        subplot(2,1,2); % lower plot
+                        plot(T, W_DOT);
+                        title(['W\_DOT for Solver: ', currentSolver, ', dT: ', num2str(currentdT)]);
+                        xlabel('Time');
+                        ylabel('W\_DOT');
+                        grid on;
+                        
+                        % Increment figure index for next plot
+                        figIndex = figIndex + 1;
+                    end
+                end
+            end
+        end
+    end
+end
